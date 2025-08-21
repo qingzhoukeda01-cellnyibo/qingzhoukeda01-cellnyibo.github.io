@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 中文学习助手</title>
+    <title>AI 中文学习助手 (修正版)</title>
+    <!-- PWA Manifest & Theme Color -->
+    <meta name="theme-color" content="#007bff"/>
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkFJIOS4reWNl+WutuaIt+W/hemhuSIsCiAgInNob3J0X25hbWUiOiAi5Lit5a245Y2X5aS0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbi0xOTIucG5nIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAicHVycG9zZSI6ICJtYXNrYWJsZSBhbnkiCiAgICB9LAogICAgewogICAgICAic3JjIjogImljb24tNTEyLnBuZyIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInB1cnBvc2UiOiAibWFza2FibGUgYW55IgogICAgfQogIF0sCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjBmMmY1Igp9">
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
 
         :root {
             --bg-color: #f0f2f5;
-            --container-bg: rgba(255, 255, 255, 0.6);
+            --container-bg: rgba(255, 255, 255, 0.65);
             --primary-color: #007bff;
             --primary-hover: #0056b3;
             --text-color: #333;
@@ -20,11 +24,7 @@
             --font-family: 'Noto Sans SC', sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: var(--font-family);
@@ -51,102 +51,27 @@
             display: flex;
             flex-direction: column;
             gap: 25px;
-            transition: all 0.3s ease;
         }
 
-        header h1 {
-            text-align: center;
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        header p {
-            text-align: center;
-            color: var(--light-text-color);
-            font-size: 0.9em;
-        }
+        header h1 { text-align: center; font-size: 2em; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+        header p { text-align: center; color: var(--light-text-color); font-size: 0.9em; }
 
-        .tab-nav {
-            display: flex;
-            justify-content: center;
-            border-bottom: 2px solid var(--border-color);
-        }
+        .tab-nav { display: flex; justify-content: center; border-bottom: 2px solid var(--border-color); }
+        .tab-button { padding: 12px 25px; cursor: pointer; background: none; border: none; font-size: 1.1em; font-weight: 500; color: var(--light-text-color); transition: all 0.3s ease; position: relative; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .tab-button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
 
-        .tab-button {
-            padding: 12px 25px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 1.1em;
-            font-weight: 500;
-            color: var(--light-text-color);
-            transition: all 0.3s ease;
-            position: relative;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-        }
+        .tab-content { display: none; flex-direction: column; gap: 20px; }
+        .tab-content.active { display: flex; }
 
-        .tab-button.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
+        .input-area textarea { width: 100%; min-height: 100px; padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); font-family: var(--font-family); font-size: 1em; resize: vertical; background-color: rgba(255, 255, 255, 0.8); transition: border-color 0.3s, box-shadow 0.3s; }
+        .input-area textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); }
 
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
-
-        .input-area textarea {
-            width: 100%;
-            min-height: 100px;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            font-family: var(--font-family);
-            font-size: 1em;
-            resize: vertical;
-            background-color: rgba(255, 255, 255, 0.8);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .input-area textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-        }
-
-        .action-button {
-            padding: 12px 25px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            align-self: flex-end;
-        }
-
-        .action-button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-        
-        .action-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .action-button { padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1.1em; font-weight: 500; cursor: pointer; transition: background-color 0.3s, transform 0.2s; align-self: flex-end; }
+        .action-button:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        .action-button:disabled { background-color: #cccccc; cursor: not-allowed; transform: none; }
 
         .result-box {
+            position: relative;
             background-color: rgba(255, 255, 255, 0.7);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -155,94 +80,59 @@
             line-height: 1.8;
             color: var(--text-color);
             font-size: 1.05em;
-            position: relative;
         }
         
-        .result-box h2 {
-            font-size: 1.3em;
-            color: var(--primary-color);
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 8px;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .result-box h2:first-child {
-            margin-top: 0;
-        }
-
-        .result-box p {
-            margin-bottom: 10px;
-        }
-        
-        .result-box ul {
-            padding-left: 20px;
-            margin-bottom: 10px;
-        }
-        
-        .result-box strong, .result-box b {
-            font-weight: 700;
-            color: #333;
-        }
-        
-        .result-box .placeholder {
-            color: var(--light-text-color);
-        }
-
-        .loading-overlay {
+        .copy-button {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            padding: 5px 8px;
+            cursor: pointer;
             display: flex;
-            justify-content: center;
             align-items: center;
-            border-radius: 10px;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 10;
+            gap: 5px;
+            font-size: 0.8em;
+            color: #555;
+            transition: all 0.2s ease;
+            opacity: 0;
+            visibility: hidden;
         }
 
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        .result-box.has-content .copy-button {
+            opacity: 0.7;
+            visibility: visible;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .copy-button:hover {
+            opacity: 1;
+            background-color: rgba(0, 0, 0, 0.1);
         }
+
+        .copy-button svg { width: 14px; height: 14px; }
         
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            #app-container {
-                padding: 20px;
-            }
-            header h1 {
-                font-size: 1.8em;
-            }
-            .tab-button {
-                padding: 10px 15px;
-                font-size: 1em;
-            }
-        }
+        .result-box h2 { font-size: 1.3em; color: var(--primary-color); border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; margin-top: 15px; margin-bottom: 10px; }
+        .result-box h3 { font-size: 1.1em; color: #333; margin-top: 15px; margin-bottom: 8px; padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .result-box h2:first-child { margin-top: 0; }
+        .result-box p { margin-bottom: 10px; }
+        .result-box ul { padding-left: 20px; margin-bottom: 10px; }
+        .result-box strong, .result-box b { font-weight: 700; color: #333; }
+        .result-box .placeholder { color: var(--light-text-color); }
 
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.8); display: flex; justify-content: center; align-items: center; border-radius: 10px; flex-direction: column; gap: 10px; z-index: 10; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @media (max-width: 600px) { body { padding: 10px; } #app-container { padding: 20px; } header h1 { font-size: 1.8em; } .tab-button { padding: 10px 15px; font-size: 1em; } }
     </style>
 </head>
 <body>
-
     <div id="app-container">
         <header>
             <h1>AI 中文学习助手</h1>
-            <p>你的私人汉语教练，助你言辞地道，表达精准。</p>
+            <p>你的私人汉语教练，助你言辞地道，像母语者一样思考。</p>
         </header>
 
         <div class="tab-nav">
@@ -250,7 +140,6 @@
             <button class="tab-button" data-tab="explain">句子/词语解析</button>
         </div>
 
-        <!-- 功能一：句子润色 -->
         <div id="tab-polish" class="tab-content active">
             <div class="input-area">
                 <textarea id="polish-input" placeholder="请在这里输入你想润色或提升的中文句子。例如：我昨天去商店为买一个苹果。"></textarea>
@@ -258,10 +147,13 @@
             <button id="polish-button" class="action-button">开始分析</button>
             <div id="polish-result" class="result-box">
                 <div class="placeholder">分析结果将显示在这里...</div>
+                <button id="copy-polish" class="copy-button" title="复制结果">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    <span class="copy-text">复制</span>
+                </button>
             </div>
         </div>
 
-        <!-- 功能二：句子解析 -->
         <div id="tab-explain" class="tab-content">
             <div class="input-area">
                 <textarea id="explain-input" placeholder="请在这里输入你听到或读到但不太理解的句子或词语。例如：他这个人做事总是雷声大，雨点小。"></textarea>
@@ -269,32 +161,56 @@
             <button id="explain-button" class="action-button">开始解析</button>
             <div id="explain-result" class="result-box">
                 <div class="placeholder">解析结果将显示在这里...</div>
+                 <button id="copy-explain" class="copy-button" title="复制结果">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    <span class="copy-text">复制</span>
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 基本的UI交互逻辑 ---
+        // --- PWA Service Worker (for offline use and 'Add to Home Screen') ---
+        if ('serviceWorker' in navigator) {
+            const swContent = `
+                const CACHE_NAME = 'chinese-tutor-cache-v1';
+                const urlsToCache = [
+                    '/', 
+                    'https://cdn.jsdelivr.net/npm/marked/marked.min.js',
+                    'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap'
+                ];
+                self.addEventListener('install', event => {
+                    event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
+                });
+                self.addEventListener('fetch', event => {
+                    event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
+                });
+            `;
+            const swBlob = new Blob([swContent], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+            navigator.serviceWorker.register(swUrl)
+                .then(reg => console.log('Service worker registered.'))
+                .catch(err => console.error('Service worker registration failed:', err));
+        }
+
+        // --- UI Interaction Logic ---
         const tabs = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
-
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(item => item.classList.remove('active'));
                 tab.classList.add('active');
-
                 const targetTab = tab.getAttribute('data-tab');
                 tabContents.forEach(content => {
                     content.classList.remove('active');
-                    if (content.id === `tab-${targetTab}`) {
-                        content.classList.add('active');
-                    }
+                    if (content.id === `tab-${targetTab}`) content.classList.add('active');
                 });
             });
         });
 
-        // --- AI核心逻辑 ---
-        const API_KEY = 'AIzaSyBaJdD222Y16haHGkRkZ6CqXS9F9W_uuII'; // 这是你提供的API密钥
+        // --- AI Core Logic ---
+        const API_KEY = 'AIzaSyBaJdD222Y16haHGkRkZ6CqXS9F9W_uuII';
+        // --- CORRECTED API URL ---
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
         
         const polishButton = document.getElementById('polish-button');
@@ -304,47 +220,35 @@
         const polishResultBox = document.getElementById('polish-result');
         const explainResultBox = document.getElementById('explain-result');
 
-        // 显示加载动画
         function showLoading(resultBox) {
-            resultBox.innerHTML = `
-                <div class="loading-overlay">
-                    <div class="spinner"></div>
-                    <p>AI正在思考中，请稍候...</p>
-                </div>
-            `;
+            resultBox.classList.remove('has-content');
+            resultBox.querySelector('.placeholder').style.display = 'none';
+            resultBox.innerHTML += `<div class="loading-overlay"><div class="spinner"></div><p>AI正在思考中，请稍候...</p></div>`;
         }
         
-        // 渲染AI返回的结果
         function renderResult(resultBox, content) {
-             // 使用marked.js将Markdown格式的AI回复转换为HTML
-            marked.setOptions({
-                gfm: true,
-                breaks: true,
-            });
-            resultBox.innerHTML = marked.parse(content);
+            const loadingOverlay = resultBox.querySelector('.loading-overlay');
+            if (loadingOverlay) loadingOverlay.remove();
+            
+            marked.setOptions({ gfm: true, breaks: true });
+            const resultHtml = marked.parse(content);
+
+            const container = document.createElement('div');
+            container.innerHTML = resultHtml;
+            resultBox.prepend(container);
+            
+            resultBox.classList.add('has-content');
         }
-        
-        // 调用AI模型的函数
+
         async function callAI(prompt) {
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        "contents": [{
-                            "parts": [{
-                                "text": prompt
-                            }]
-                        }],
-                         "generationConfig": {
-                            "temperature": 0.7,
-                            "topK": 1,
-                            "topP": 1,
-                            "maxOutputTokens": 2048,
-                        },
-                         "safetySettings": [
+                        "contents": [{"parts": [{"text": prompt}]}],
+                        "generationConfig": { "temperature": 0.7, "topK": 1, "topP": 1, "maxOutputTokens": 2048 },
+                        "safetySettings": [
                             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
                             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
                             {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
@@ -352,101 +256,76 @@
                         ]
                     })
                 });
-
                 if (!response.ok) {
                     const errorData = await response.json();
-                    console.error('API Error:', errorData);
                     return `抱歉，调用AI服务时出现错误：${errorData.error.message || response.statusText}`;
                 }
-
                 const data = await response.json();
-                if (data.candidates && data.candidates.length > 0) {
-                    return data.candidates[0].content.parts[0].text;
-                } else {
-                    return "抱歉，AI未能生成有效回复。可能是因为输入内容触发了安全限制。";
-                }
-
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "抱歉，AI未能生成有效回复。可能是因为输入内容触发了安全限制。";
             } catch (error) {
-                console.error('Fetch Error:', error);
-                return `抱歉，连接AI服务时出现网络错误。请检查你的网络连接和API密钥是否正确。错误信息: ${error.message}`;
+                return `抱歉，连接AI服务时出现网络错误。请检查网络连接和API密钥。错误: ${error.message}`;
             }
         }
 
-        // --- 事件监听 ---
+        // --- Event Listeners for Buttons ---
 
-        // "句子润色"按钮点击事件
         polishButton.addEventListener('click', async () => {
             const userInput = polishInput.value.trim();
-            if (!userInput) {
-                alert('请输入你需要分析的句子！');
-                return;
-            }
-
+            if (!userInput) { alert('请输入你需要分析的句子！'); return; }
             polishButton.disabled = true;
+            polishResultBox.innerHTML = `<div class="placeholder">分析结果将显示在这里...</div><button id="copy-polish" class="copy-button" title="复制结果"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span class="copy-text">复制</span></button>`;
             showLoading(polishResultBox);
-            
-            // --- [核心升级] 优化后的AI指令 ---
-            const prompt = `
-                你是一位顶级的中文语言教学专家和语言学家，尤其擅长剖析学习者思维和母语者思维的差异。请严格按照以下格式和要求，分析并润色用户提供的中文句子，帮助他像母语者一样思考和表达。所有回答必须使用简体中文。
-
-                用户的句子是："""${userInput}"""
-
-                请按以下结构进行分析：
-
-                ## 1. 综合评价
-                简要评价用户句子的语法、词汇和地道程度。
-
-                ## 2. 直接优化建议
-                提供一个或多个在原句结构上直接修改、修正语法和搭配错误的版本。
-                
-                ## 3. 母语者思维 · 口语表达
-                **这是最重要的部分。** 请你忘掉翻译式思维，完全站在一个受过良好教育的中文母语者角度，在自然的**日常口语对话**中，为了表达同样的核心意思，最可能会怎么说？这个版本可能结构和用词会和原句完全不同。请详细解释为什么这样说更自然、更符合中国人的思维和语言习惯。
-
-                ## 4. 词汇升级与拓展 (书面语/正式场合)
-                如果原句表达比较基础，请提供一个使用了更高级、更书面化词汇（HSK5-6及以上）的升级版句子，并简要说明其适用的正式场合或书面语环境。
-
-                ## 5. 关键点拨与总结
-                总结原句的主要问题，并对比几个版本的差异，帮助学习者理解从“正确”到“地道”再到“得体”的进阶过程。
-
-                ---
-                **拼音标注规则**: 在所有你提供的例句（优化版、口语版、升级版）中，如果有名词、动词、形容词、副词或成语属于HSK5级或以上水平，必须在该词汇后面用方括号[]附上拼音。例如：“我们应该**倡导**[chàngdǎo]勤俭节约的风气。”
-            `;
-
+            const prompt = `你是一位精通语言学、深谙汉语思维模式的母语者兼高级汉语教师。你的目标是帮助用户超越“语法正确”，达到“表达地道、思维地道”的水平。请严格按照以下格式和要求，分析并优化用户提供的中文句子。所有回答必须使用简体中文。用户的句子是："""${userInput}"""\n请按以下结构进行分析和回答：\n\n## 1. 综合评价\n一句话点出原句的主要问题。\n\n## 2. 思维与表达优化\n### 口语化地道表达\n*   提供1-2个在日常对话中，中国人会使用的、非常自然的说法。\n### 精炼/书面化表达\n*   提供一个更显文化素养、更书面化或更精确的表达方式。\n\n## 3. “像母语者一样思考”——深度解析\n*   **点明思维差异**: 明确指出原句的表达逻辑与汉语母语者的思维习惯有何不同。\n*   **解释优化原因**: 详细说明为什么建议的表达方式更地道。\n*   **场景辨析**: 简单说明“口语化表达”和“精炼表达”分别适合在什么情况下使用。\n\n## 4. 核心词汇升级与注音\n*   在“精炼/书面化表达”的句子中，如果有名词、动词、形容词、副词或成语属于HSK5级或以上水平，必须在该词汇后面用方括号[]附上拼音。例如：“此举**旨在**[zhǐ zài]提升团队的**凝聚力**[níng jù lì]。”`;
             const aiResponse = await callAI(prompt);
             renderResult(polishResultBox, aiResponse);
             polishButton.disabled = false;
         });
 
-        // "句子解析"按钮点击事件
         explainButton.addEventListener('click', async () => {
             const userInput = explainInput.value.trim();
-            if (!userInput) {
-                alert('请输入你需要解析的句子或词语！');
-                return;
-            }
-            
+            if (!userInput) { alert('请输入你需要解析的句子或词语！'); return; }
             explainButton.disabled = true;
+            explainResultBox.innerHTML = `<div class="placeholder">解析结果将显示在这里...</div><button id="copy-explain" class="copy-button" title="复制结果"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span class="copy-text">复制</span></button>`;
             showLoading(explainResultBox);
-
-            const prompt = `
-                你是一位经验丰富的汉语教师，特别擅长用简单易懂的中文来解释复杂的语言点。请严格按照以下格式和要求，为中文学习者解析他们不理解的句子或词语。所有回答必须使用简体中文，禁止使用任何英文或拼音。
-
-                用户输入的内容是："""${userInput}"""
-
-                你的任务是：
-                1.  **整体含义**：用比原句更简单的语言解释这个句子或词语的核心意思。
-                2.  **词语拆解**：如果输入的是一个句子或成语，请拆解其中的关键词语，逐一解释它们的意思。
-                3.  **用法/结构分析**：解释这个词语或句子结构通常在什么情境下使用。如果是句子，可以简单分析其语法结构。
-                4.  **举一反三（例句）**：提供2-3个清晰、简单、生活化的例句，让学习者能更好地理解和模仿。
-
-                请确保你的整个解释所使用的词汇和语法都比用户输入的内容要简单，以便于中级水平的学习者理解。
-                请以清晰的Markdown格式输出，使用标题（##）来区分每个部分。
-            `;
-
+            const prompt = `你是一位经验丰富的汉语教师，特别擅长用简单易懂的中文来解释复杂的语言点。请严格按照以下格式和要求，为中文学习者解析他们不理解的句子或词语。所有回答必须使用简体中文。用户输入的内容是："""${userInput}"""\n你的任务是：\n\n1.  **词语与拼音**：首先，请明确写出要解释的词语或句子，并在其后用方括号[]附上拼音。例如：**雷声大，雨点小 [léi shēng dà, yǔ diǎn xiǎo]**\n\n2.  **整体含义**：用比原句更简单的语言解释这个句子或词语的核心意思。\n\n3.  **词语拆解**：如果输入的是一个句子或成语，请拆解其中的关键词语，逐一解释它们的意思。\n\n4.  **用法/结构分析**：解释这个词语或句子结构通常在什么情境下使用。\n\n5.  **举一反三（例句）**：提供2-3个清晰、简单、生活化的例句。\n\n请确保你的整个解释所使用的词汇和语法都比用户输入的内容要简单，以便于中级水平的学习者理解。请以清晰的Markdown格式输出。`;
             const aiResponse = await callAI(prompt);
             renderResult(explainResultBox, aiResponse);
             explainButton.disabled = false;
         });
+        
+        // --- Copy Button Logic ---
+        function setupCopyListener(buttonId, resultBoxId) {
+            document.addEventListener('click', function(event) {
+                const button = event.target.closest(`#${buttonId}`);
+                if (button) {
+                    const resultBox = document.getElementById(resultBoxId);
+                    const contentToCopy = Array.from(resultBox.childNodes)
+                        .filter(node => !node.classList || !node.classList.contains('copy-button'))
+                        .map(node => node.innerText || node.textContent)
+                        .join('\n')
+                        .trim();
+
+                    if (navigator.clipboard && contentToCopy) {
+                        navigator.clipboard.writeText(contentToCopy).then(() => {
+                            const copyTextSpan = button.querySelector('.copy-text');
+                            if (copyTextSpan) {
+                                const originalText = copyTextSpan.textContent;
+                                copyTextSpan.textContent = '已复制!';
+                                setTimeout(() => {
+                                    copyTextSpan.textContent = originalText;
+                                }, 2000);
+                            }
+                        }).catch(err => {
+                            console.error('无法复制文本: ', err);
+                            alert('复制失败！');
+                        });
+                    }
+                }
+            });
+        }
+
+        setupCopyListener('copy-polish', 'polish-result');
+        setupCopyListener('copy-explain', 'explain-result');
 
     </script>
 </body>
